@@ -40,6 +40,7 @@ def test_photons_band_error(band_error, mag):
 
 
 def test_observing_conditions(seeing, moon_illumination, airmass):
+    """ test the setting of observing conditions """
     etc = ETC()
     etc.initialize_observing_conditions(
         seeing=seeing, moon_illumination=moon_illumination, airmass=airmass,
@@ -47,6 +48,7 @@ def test_observing_conditions(seeing, moon_illumination, airmass):
 
 
 def test_snr(band, mag, dit, ndit, seeing, moon_illumination, airmass):
+    """ test the signal to noise calculation """
     etc = ETC()
     etc.initialize_observing_conditions(
         seeing=seeing, moon_illumination=moon_illumination, airmass=airmass,
@@ -58,6 +60,7 @@ def test_snr(band, mag, dit, ndit, seeing, moon_illumination, airmass):
 
 
 def test_ndit(band, mag, dit, snr, seeing, moon_illumination, airmass):
+    """ test the ndit estimation """
     etc = ETC()
     etc.initialize_observing_conditions(
         seeing=seeing, moon_illumination=moon_illumination, airmass=airmass,
