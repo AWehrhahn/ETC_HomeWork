@@ -1,6 +1,13 @@
+# -*- coding: utf-8 -*-
+"""
+Test the main ETC functionality
+"""
+
 from astropy import units as u
 
 from src.etc import ETC
+
+# TODO: Test more invalid input parameters
 
 
 def test_photons(band, mag):

@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+Exposure time calculator module for the HAWK-I instrument
+"""
+
 from functools import lru_cache
 from typing import List, Union
 

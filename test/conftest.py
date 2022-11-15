@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+""" 
+PyTest configuration initial setup
+Includes all types of parameters to iterate over in the actual tests
+"""
+
 import pytest
 from astropy import units as u
 
