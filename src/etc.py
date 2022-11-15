@@ -5,6 +5,8 @@ import hmbp
 import numpy as np
 from astropy import units as u
 
+# Valid types for the magnitude of the target
+# if float assumes Vega Magnitudes
 MagUnit = Union[float, u.Quantity]
 
 
@@ -36,9 +38,7 @@ class ETC:
     readout_noise: u.Quantity = 5 * (u.electron / u.pixel)
     #:Quantity: Dark Noise in e-/pixel/s
     dark_noise: u.Quantity = 0.01 * (u.electron / u.pixel / u.s)
-    # The on-sky field of view is 7.5'x7.5', with a cross-shaped gap of 15"
-    # between the four HAWAII 2RG 2048x2048 pixels detectors.
-    # The pixel scale is of 0.106".
+    #:Quantity: angular scale of each pixel in arcsecond squared / pixel
     pixel_scale = 0.1063 ** 2 * (1 / u.pixel)
     #:Quantity: area of the telescope mirror
     telescope_size = np.pi * (8 / 2 * u.m) ** 2
@@ -46,9 +46,9 @@ class ETC:
     #:Quantity: efficieny of the detector in converting photons to electron
     quantum_efficiency = 0.8 * (u.electron / u.ph)
     #:Quantity: Detector linearity/flat-fielding limit
-    linearity_limit = 100_000 * u.electron / u.pixel
-    # Detector saturation limit
-    saturation_limit = 120_000 * u.electron / u.pixel
+    linearity_limit = 100_000 * (u.electron / u.pixel)
+    #:Quantity: Detector saturation limit
+    saturation_limit = 120_000 * (u.electron / u.pixel)
     #:Quantity: seeing conditions in arcsec
     seeing: u.Quantity = 1 * u.arcsec
     #:float: airmass for the observation
@@ -115,7 +115,7 @@ class ETC:
         airmass : float, optional
             airmass of the observation, by default 1
         """
-        if not (0 <= moon_illumination <= 1):
+        if not 0 <= moon_illumination <= 1:
             raise ValueError(
                 f"moon_illumination must be between 0 and 1, but got {moon_illumination}"
             )
@@ -159,6 +159,7 @@ class ETC:
 
         signal *= ndit
 
+        # assumption: only readout noise, dark noise and photon shot noise
         readout_noise = self.readout_noise * ndit
         dark_noise = self.dark_noise * exposure_time
         photon_noise = np.sqrt(signal.to_value(u.electron / u.pixel))
