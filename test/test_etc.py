@@ -1,5 +1,7 @@
-from src.etc import ETC
 from astropy import units as u
+
+from src.etc import ETC
+
 
 def test_photons(band, mag):
     """
@@ -15,8 +17,9 @@ def test_photons(band, mag):
     etc = ETC()
     photons = etc.photons_in_filter(band, mag)
     assert isinstance(photons, u.Quantity)
-    assert photons.unit.is_equivalent(u.ph/u.pix/u.s)
+    assert photons.unit.is_equivalent(u.ph / u.pix / u.s)
     assert photons > 0 * u.ph / u.pix / u.s
+
 
 def test_photons_band_error(band_error, mag):
     """ Test for the correct error message when using invalid band parameters """
@@ -28,32 +31,29 @@ def test_photons_band_error(band_error, mag):
     except error as e:
         assert isinstance(e, error)
 
+
 def test_observing_conditions(seeing, moon_illumination, airmass):
     etc = ETC()
     etc.initialize_observing_conditions(
-        seeing=seeing,
-        moon_illumination=moon_illumination,
-        airmass=airmass,
+        seeing=seeing, moon_illumination=moon_illumination, airmass=airmass,
     )
+
 
 def test_snr(band, mag, dit, ndit, seeing, moon_illumination, airmass):
     etc = ETC()
     etc.initialize_observing_conditions(
-        seeing=seeing,
-        moon_illumination=moon_illumination,
-        airmass=airmass,
+        seeing=seeing, moon_illumination=moon_illumination, airmass=airmass,
     )
     snr = etc.get_snr(band, mag, dit, ndit)
 
     assert isinstance(snr, float)
     assert snr > 0
-    
+
+
 def test_ndit(band, mag, dit, snr, seeing, moon_illumination, airmass):
     etc = ETC()
     etc.initialize_observing_conditions(
-        seeing=seeing,
-        moon_illumination=moon_illumination,
-        airmass=airmass,
+        seeing=seeing, moon_illumination=moon_illumination, airmass=airmass,
     )
     ndit = etc.get_ndit(band, snr, mag, dit)
 

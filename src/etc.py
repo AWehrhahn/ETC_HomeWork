@@ -1,10 +1,12 @@
-from astropy import units as u
-import hmbp
-import numpy as np
 from functools import lru_cache
 from typing import List, Union
 
+import hmbp
+import numpy as np
+from astropy import units as u
+
 MagUnit = Union[float, u.Quantity]
+
 
 class ETC:
     """
@@ -34,31 +36,23 @@ class ETC:
     readout_noise: u.Quantity = 5 * (u.electron / u.pixel)
     #:Quantity: Dark Noise in e-/pixel/s
     dark_noise: u.Quantity = 0.01 * (u.electron / u.pixel / u.s)
-
     # The on-sky field of view is 7.5'x7.5', with a cross-shaped gap of 15"
     # between the four HAWAII 2RG 2048x2048 pixels detectors.
     # The pixel scale is of 0.106".
     pixel_scale = 0.1063 ** 2 * (1 / u.pixel)
-
     #:Quantity: area of the telescope mirror
     telescope_size = np.pi * (8 / 2 * u.m) ** 2
-
     # assumption: this is constant along all bands
     #:Quantity: efficieny of the detector in converting photons to electron
     quantum_efficiency = 0.8 * (u.electron / u.ph)
-
     #:Quantity: Detector linearity/flat-fielding limit
     linearity_limit = 100_000 * u.electron / u.pixel
-
     # Detector saturation limit
     saturation_limit = 120_000 * u.electron / u.pixel
-
     #:Quantity: seeing conditions in arcsec
     seeing: u.Quantity = 1 * u.arcsec
-
     #:float: airmass for the observation
     airmass: float = 1
-
     #:float: fraction of lunar illumination
     moon_illumination = 0.5
 
@@ -126,15 +120,13 @@ class ETC:
                 f"moon_illumination must be between 0 and 1, but got {moon_illumination}"
             )
 
-        #TODO: make these do something
+        # TODO: make these do something
         self.moon_illumination = moon_illumination
         self.airmass = airmass
         self.seeing = seeing
 
     @u.quantity_input(dit=u.s)
-    def get_snr(
-        self, band: str, mag: MagUnit, dit: u.Quantity, ndit: int
-    ) -> float:
+    def get_snr(self, band: str, mag: MagUnit, dit: u.Quantity, ndit: int) -> float:
         """
         Calculate the Signal-to-Noise ratio for this observation
 
@@ -179,7 +171,9 @@ class ETC:
         return snr
 
     @u.quantity_input(dit=u.s)
-    def get_ndit(self, band:str, snr:float, mag: MagUnit, dit:u.Quantity) -> u.Quantity:
+    def get_ndit(
+        self, band: str, snr: float, mag: MagUnit, dit: u.Quantity
+    ) -> u.Quantity:
         """
         Calculate the number of exposures necessary to achieve the given signal-to-noise
         ratio for this target
@@ -202,7 +196,7 @@ class ETC:
         """
         if dit <= 0 * u.s:
             raise ValueError("DIT must be positive")
-        
+
         # only emit the warning once
         is_warning = False
         # Start at one exposure and search for the next highest
@@ -216,7 +210,9 @@ class ETC:
                 print("WARNING: total exposure time is longer than 1 hour")
                 is_warning = True
             if ndit * dit >= 3 * u.hour:
-                print("WARNING: The maximum exposure time of 3 hours was reached. Stopping the calculation.")
+                print(
+                    "WARNING: The maximum exposure time of 3 hours was reached. Stopping the calculation."
+                )
                 break
-                
+
         return ndit
