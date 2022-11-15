@@ -1,5 +1,5 @@
 from astropy import units as u
-from etc import ETC
+from src.etc import ETC
 
 filter = "H2"
 mag = 20
